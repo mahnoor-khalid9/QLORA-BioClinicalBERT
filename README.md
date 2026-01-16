@@ -1,4 +1,5 @@
 # QLoRA Fine-Tuned Hierarchical BioClinicalBERT
+![Architecture](assets/lora_clinicalBERT.svg)
 
 A hierarchical disease classification system using QLoRA fine-tuned Bio_ClinicalBERT for medical text analysis. This project implements an optimized hierarchical classifier that categorizes medical abstracts into parent and child disease categories with high accuracy and efficiency.
 
