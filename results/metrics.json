@@ -1,0 +1,12 @@
+{
+  "train_losses": [
+    0.08110137952807453
+  ],
+  "parent_losses": [
+    0.04064194206470643
+  ],
+  "child_losses": [
+    0.09844113919347408
+  ],
+  "val_accuracies_parent": [
+    

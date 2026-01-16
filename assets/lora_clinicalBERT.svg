@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="600" viewBox="0 0 940 600">
+  <style>
+    .box { fill:#f5f7fb; stroke:#2b6cb0; stroke-width:2; rx:8; }
+    .title { font: bold 14px sans-serif; fill:#1a202c; }
+    .text  { font: 12px sans-serif; fill:#2d3748; }
+    .small { font: 11px sans-serif; fill:#4a5568; }
+    .arrow { stroke:#2b6cb0; stroke-width:2; fill:none; marker-end:url(#arrowhead); }
+  </style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7"
+            refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2b6cb0"/>
+    </marker>
+  </defs>
+
+  <!-- ===================== DATA PIPELINE ===================== -->
+  <rect x="20" y="20" width="150" height="50" class="box"/>
+  <text x="95" y="50" text-anchor="middle" class="title">Raw Texts</text>
+
+  <rect x="200" y="20" width="240" height="60" class="box"/>
+  <text x="320" y="45" text-anchor="middle" class="title">HierarchicalTextDataset</text>
+  <text x="320" y="62" text-anchor="middle" class="small">(tokenize &amp; return labels)</text>
+
+  <rect x="470" y="20" width="180" height="50" class="box"/>
+  <text x="560" y="50" text-anchor="middle" class="title">create_dataloaders</text>
+
+  <rect x="700" y="20" width="210" height="50" class="box"/>
+  <text x="805" y="40" text-anchor="middle" class="title">Batch</text>
+  <text x="805" y="57" text-anchor="middle" class="small">input_ids, attention_mask</text>
+
+  <path d="M170 45 L200 45" class="arrow"/>
+  <path d="M440 45 L470 45" class="arrow"/>
+  <path d="M650 45 L700 45" class="arrow"/>
+
+  <!-- ===================== MODEL CONTAINER ===================== -->
+  <rect x="200" y="120" width="710" height="320" rx="10"
+        fill="#ffffff" stroke="#2b6cb0" stroke-width="2"/>
+  <text x="555" y="140" text-anchor="middle" class="title">
+    LoRA Hierarchical ClinicalBERT
+  </text>
+  <text x="555" y="156" text-anchor="middle" class="small">
+    method: get_trainable_params()
+  </text>
+  <!-- Batch -> Model (straight vertical down to model boundary) -->
+  <path d="M805 70 L805 120" class="arrow"/>
+
+  <!-- ===================== ENCODER ===================== -->
+  <rect x="250" y="180" width="300" height="100" class="box"/>
+  <text x="400" y="210" text-anchor="middle" class="title">
+    EfficientClinicalBERTEncoder
+  </text>
+  <text x="400" y="230" text-anchor="middle" class="small">
+    AutoModel (ClinicalBERT)
+  </text>
+  <text x="400" y="247" text-anchor="middle" class="small">
+    checkpointing &amp; freezing
+  </text>
+
+  <!-- ===================== PARENT HEAD ===================== -->
+  <rect x="580" y="175" width="300" height="95" class="box"/>
+  <text x="730" y="200" text-anchor="middle" class="title">
+    Parent ClassificationHead
+  </text>
+  <text x="730" y="218" text-anchor="middle" class="small">
+    parent_logits
+  </text>
+  <text x="730" y="234" text-anchor="middle" class="small">
+    embeddings 
+  </text>
+
+  <!-- ===================== CHILD HEAD ===================== -->
+  <rect x="580" y="300" width="300" height="95" class="box"/>
+  <text x="730" y="330" text-anchor="middle" class="title">
+    Child ClassificationHead
+  </text>
+  <text x="730" y="348" text-anchor="middle" class="small">
+    child_logits
+  </text>
+  <text x="730" y="364" text-anchor="middle" class="small">
+    embeddings 
+  </text>
+
+
+  <!-- ===================== LORA ===================== -->
+  <rect x="250" y="320" width="300" height="80" class="box"/>
+  <text x="400" y="345" text-anchor="middle" class="title">
+    LoRALinear
+  </text>
+  <text x="400" y="362" text-anchor="middle" class="small">
+    Low-rank adapters (inside heads)
+  </text>
+
+
+
+  <!-- ===================== MODEL CONFIG ===================== -->
+  <rect x="20" y="480" width="240" height="80" class="box"/>
+  <text x="140" y="505" text-anchor="middle" class="title">ModelConfig</text>
+  <text x="140" y="522" text-anchor="middle" class="small">
+    use_lora, lora_r, lora_alpha
+  </text>
+  <text x="140" y="538" text-anchor="middle" class="small">
+    freeze_backbone_ratio
+  </text>
+
+  <!-- Config → Encoder (start at top boundary of ModelConfig, route up and right, end at encoder lower boundary) -->
+  <path d="M140 480 L140 300 L400 300 L400 280" class="arrow"/>
+
+  <!-- ===================== FREEZE UTILS ===================== -->
+  <rect x="300" y="480" width="260" height="80" class="box"/>
+  <text x="430" y="505" text-anchor="middle" class="title">
+    freeze_encoder / unfreeze_encoder
+  </text>
+  <text x="430" y="522" text-anchor="middle" class="small">
+    layer-wise control
+  </text>
+
+  <!-- Freeze → LoRA lower boundary (straight vertical line) -->
+  <path d="M430 480 L430 400" class="arrow"/>
+
+  <!-- ===================== LOSS ===================== -->
+  <rect x="580" y="480" width="300" height="80" class="box"/>
+  <text x="730" y="505" text-anchor="middle" class="title">
+    FocalLoss / get_weighted_loss
+  </text>
+  <text x="730" y="522" text-anchor="middle" class="small">
+    handles class imbalance
+  </text>
+
+  <!-- Child Head → Loss -->
+  <path d="M730 395 L730 480" class="arrow"/>
+
+  <!-- LoRA → Heads (placed last so arrowheads are visible) -->
+  <!-- Child: straight horizontal to child left boundary -->
+  <!-- Parent: vertical up then right to parent left boundary -->
+  <path d="M550 380 L580 380" class="arrow"/>
+  <path d="M550 340 L565 340 L565 220 L580 220" class="arrow"/>
+
+
+  <!-- Encoder → Heads -->
+  <!-- Parent arrow removed (LoRA provides adapter output to parent) -->
+  <path d="M550 245 L570 245 L570 355 L580 355" class="arrow"/>
+  <path d="M550 190 L580 190" class="arrow"/>
+
+</svg>
